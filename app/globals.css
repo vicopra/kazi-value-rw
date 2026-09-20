@@ -1,0 +1,116 @@
+/* KAZI Coming Soon - the page is only the supplied artwork. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0d0b;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #0a0d0b;
+}
+
+/* Blurred, darkened copy of the artwork behind the main image */
+.backdrop {
+  position: absolute;
+  inset: -6%;
+  background: #0a0d0b url("/kazi-coming-soon.webp") center / cover no-repeat;
+  filter: blur(28px) brightness(0.55) saturate(1.1);
+  transform: translateZ(0);
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* default: whole artwork always visible */
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Landscape screens close to the artwork's 16:9 shape:
+   fill the whole screen (only a thin edge is trimmed). */
+@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 2/1) {
+  .backdrop {
+    display: none;
+  }
+  .art {
+    object-fit: cover;
+  }
+}
+
+/* ---------- Portrait screens (phones, portrait tablets) ----------
+   Source artwork is 1672x941. Two crops of it are stacked:
+   - phone crop:   x 0-770,    y 0-941   (770 x 941)
+   - message crop: x 790-1510, y 240-660 (720 x 420)
+   No stretching: each crop keeps its own aspect ratio. */
+.portrait {
+  display: none;
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .art {
+    display: none;
+  }
+  .portrait {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* composite is 770 x 1341 units; scale to fit width or height */
+  .portrait-inner {
+    width: min(100vw, calc(100dvh * 770 / 1341));
+    aspect-ratio: 770 / 1341;
+    display: flex;
+    flex-direction: column;
+  }
+  .crop {
+    background-image: url("/kazi-coming-soon.webp");
+    background-repeat: no-repeat;
+    width: 100%;
+  }
+  .crop-phone {
+    aspect-ratio: 770 / 941;
+    background-size: 217.14% auto; /* 1672 / 770 */
+    background-position: 0% 0%;
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 7%, #000 90%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, #000 88%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 7%, #000 90%, transparent 100%);
+    mask-composite: intersect;
+  }
+  .crop-message {
+    width: 93.5%; /* 720 / 770 */
+    margin: 0 auto;
+    aspect-ratio: 720 / 420;
+    background-size: 232.22% auto; /* 1672 / 720 */
+    background-position: 82.98% 46.07%; /* x 790, y 240 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    mask-composite: intersect;
+  }
+}
