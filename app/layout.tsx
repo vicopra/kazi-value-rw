@@ -7,6 +7,8 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kazi.value.rw"),
+  // Google Search Console ownership tag. Set GOOGLE_SITE_VERIFICATION in Vercel to switch it on.
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
   title,
   description,
   openGraph: {
